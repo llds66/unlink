@@ -80,8 +80,9 @@ async function getAppid() {
           </button>
         </form>
 
-        <div v-if="appid && url" class="mt-5 flex px-4 py-3 justify-center items-center">
+        <div class="mt-5 flex h-11 items-center justify-center px-4">
           <a
+            v-if="appid && url"
             :href="`https://www.xiaohongshu.com/user/profile/${appid}`"
             target="_blank"
             rel="noopener noreferrer"
@@ -90,6 +91,7 @@ async function getAppid() {
           <div class="i-carbon-link"></div>
             小红书用户主页
           </a>
+          <span v-else class="text-neutral-400 text-sm">请输入分享链接</span>
         </div>
 
         <p class="mt-6 text-center text-xs leading-5 text-neutral-500">
