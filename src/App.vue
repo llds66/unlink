@@ -28,7 +28,7 @@ async function getAppid() {
       throw new Error(response.message || "未获取到 appid");
     }
     appid.value = response.data.appuid;
-    toast.success("获取成功");
+    toast.success("解析成功");
   } catch (error) {
     console.log(error);
     toast.error(error instanceof Error ? error.message : "获取失败，请稍后重试");
