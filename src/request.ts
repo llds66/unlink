@@ -20,6 +20,29 @@ interface APIResponse {
   };
 }
 
+const XHS_HOSTS = new Set(["xhslink.cn", "www.xiaohongshu.com", "xiaohongshu.com"]);
+
+/**
+ * Extract the link from a Xiaohongshu app share message, which commonly
+ * includes a title, markdown link and instructions after the actual URL.
+ */
+export function extractXhsLink(value: string): string | null {
+  const candidates = value.match(/https?:\/\/[^\s\]\[<>"')]+/gi) ?? [];
+
+  for (const candidate of candidates) {
+    try {
+      const parsed = new URL(candidate);
+      if (XHS_HOSTS.has(parsed.hostname.toLowerCase())) {
+        return parsed.toString();
+      }
+    } catch {
+      // Continue checking other text fragments that look like URLs.
+    }
+  }
+
+  return null;
+}
+
 /**
  * @route POST /xhs
  * @body url - 链接

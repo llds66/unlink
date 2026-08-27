@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
-import { xhsApi } from "./request";
+import { extractXhsLink, xhsApi } from "./request";
 
 const url = ref("");
 const appid = ref("");
@@ -14,9 +14,9 @@ function clearUrl() {
 }
 
 async function getAppid() {
-  const link = url.value.trim();
+  const link = extractXhsLink(url.value.trim());
   if (!link) {
-    toast.error("请输入小红书分享链接");
+    toast.error("请输入或粘贴包含小红书链接的分享内容");
     return;
   }
 
@@ -49,11 +49,10 @@ async function getAppid() {
           <div class="relative min-w-0 flex-1">
             <input
               v-model="url"
-              type="url"
-              inputmode="url"
-              autocomplete="url"
-              placeholder="小红书分享链接（APP端）"
-              aria-label="小红书链接"
+              type="text"
+              autocomplete="off"
+              placeholder="粘贴小红书APP分享链接"
+              aria-label="小红书链接或分享文案"
               class="w-full rounded-lg border border-neutral-700 bg-neutral-900 py-2.5 pl-3 pr-10 text-base text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500 focus:ring-2 focus:ring-neutral-700"
             />
             <button
