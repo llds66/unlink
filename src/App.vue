@@ -55,16 +55,23 @@ async function getAppid() {
 <template>
   <Toaster position="top-center" :closeButton="true" closeButtonPosition="top-right" />
 
-  <main class="min-h-screen w-full bg-neutral-950 px-4 text-white">
+  <main class="relative min-h-screen w-full bg-neutral-950 px-4 text-white">
     <section class="flex min-h-screen min-w-0 items-center justify-center">
       <div class="flex w-full max-w-md flex-col">
-        <h1 class="text-center text-2xl font-bold tracking-tight">UnLink</h1>
+        <div class="flex items-center justify-center gap-2">
+          <h1 class="text-2xl font-bold tracking-tight">UnLink</h1>
+          <a
+            href="https://github.com/llds66/unlink"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="访问 UnLink GitHub 仓库"
+            class="text-neutral-400 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
+          >
+            <div class="i-carbon-logo-github text-xl " aria-hidden="true" />
+          </a>
+        </div>
         <p class="mt-3 text-center  leading-5 text-neutral-400">
         输入分享链接，检测是否泄露个人信息
-        </p>
-        <p class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-neutral-500">
-          <span class="i-carbon-information" aria-hidden="true" />
-          当前仅支持小红书 App 分享文案及微信分享
         </p>
         <form class="mt-6 flex gap-2" @submit.prevent="getAppid">
           <div class="relative min-w-0 flex-1">
@@ -118,5 +125,9 @@ async function getAppid() {
 
       </div>
     </section>
+    <p class="absolute inset-x-4 bottom-6 flex items-center justify-center gap-1 text-center text-xs text-neutral-500">
+      <span class="i-carbon-information" aria-hidden="true" />
+      当前仅支持小红书 App 分享文案及微信分享
+    </p>
   </main>
 </template>
