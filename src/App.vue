@@ -59,8 +59,12 @@ async function getAppid() {
     <section class="flex min-h-screen min-w-0 items-center justify-center">
       <div class="flex w-full max-w-md flex-col">
         <h1 class="text-center text-2xl font-bold tracking-tight">UnLink</h1>
-        <p class="mt-3 text-center text-xs leading-5 text-neutral-500">
+        <p class="mt-3 text-center  leading-5 text-neutral-400">
         输入分享链接，检测是否泄露个人信息
+        </p>
+        <p class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-neutral-500">
+          <span class="i-carbon-information" aria-hidden="true" />
+          当前仅支持小红书 App 分享文案及微信分享
         </p>
         <form class="mt-6 flex gap-2" @submit.prevent="getAppid">
           <div class="relative min-w-0 flex-1">
