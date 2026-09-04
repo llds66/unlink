@@ -16,7 +16,7 @@ interface APIResponse {
   success: boolean;
   message: string;
   data: {
-    appuid: string;
+    user_id: string | null;
   };
 }
 

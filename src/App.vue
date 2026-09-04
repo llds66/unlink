@@ -6,28 +6,42 @@ import { extractXhsLink, xhsApi } from "./request";
 
 const url = ref("");
 const appid = ref("");
+const hasNoPersonalInfoRisk = ref(false);
 const isLoading = ref(false);
 
 function clearUrl() {
   url.value = "";
   appid.value = "";
+  hasNoPersonalInfoRisk.value = false;
 }
 
 async function getAppid() {
   const link = extractXhsLink(url.value.trim());
   if (!link) {
-    toast.error("请输入或粘贴包含小红书链接的分享内容");
+    toast.error("请输入正确链接格式");
     return;
   }
 
   isLoading.value = true;
   appid.value = "";
+  hasNoPersonalInfoRisk.value = false;
   try {
     const response = await xhsApi(link);
-    if (!response.success || !response.data?.appuid) {
-      throw new Error(response.message || "未获取到 appid");
+    if (!response.success) {
+      throw new Error(response.message || "解析失败");
     }
-    appid.value = response.data.appuid;
+
+    if (response.data?.user_id === null) {
+      hasNoPersonalInfoRisk.value = true;
+      toast.success("解析成功");
+      return;
+    }
+
+    if (!response.data?.user_id) {
+      throw new Error(response.message || "解析失败");
+    }
+
+    appid.value = response.data.user_id;
     toast.success("解析成功");
   } catch (error) {
     console.log(error);
@@ -45,13 +59,16 @@ async function getAppid() {
     <section class="flex min-h-screen min-w-0 items-center justify-center">
       <div class="flex w-full max-w-md flex-col">
         <h1 class="text-center text-2xl font-bold tracking-tight">UnLink</h1>
+        <p class="mt-3 text-center text-xs leading-5 text-neutral-500">
+        输入分享链接，检测是否泄露个人信息
+        </p>
         <form class="mt-6 flex gap-2" @submit.prevent="getAppid">
           <div class="relative min-w-0 flex-1">
             <input
               v-model="url"
               type="text"
               autocomplete="off"
-              placeholder="粘贴小红书APP分享链接"
+              placeholder="输入小红书APP分享链接或者内容"
               aria-label="小红书链接或分享文案"
               class="w-full rounded-lg border border-neutral-700 bg-neutral-900 py-2.5 pl-3 pr-10 text-base text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500 focus:ring-2 focus:ring-neutral-700"
             />
@@ -75,7 +92,7 @@ async function getAppid() {
               class="i-svg-spinners-3-dots-bounce text-xl"
               aria-label="加载中"
             />
-            <span v-else>解析链接</span>
+            <span v-else>检测链接</span>
           </button>
         </form>
 
@@ -85,17 +102,16 @@ async function getAppid() {
             :href="`https://www.xiaohongshu.com/user/profile/${appid}`"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex gap-1 items-baseline-last text-sm text-neutral-400 underline underline-offset-4 transition hover:text-white"
+            class="flex items-center gap-1 rounded-lg bg-white px-4 py-2 text-sm font-medium text-neutral-950 transition duration-200 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
           >
-          <div class="i-carbon-link"></div>
-            小红书用户主页
+            <div class="i-carbon-link"></div>
+            跳转至用户主页
           </a>
-          <span v-else class="text-neutral-400 text-sm">请输入分享链接</span>
+          <span v-else-if="hasNoPersonalInfoRisk" class="text-sm text-neutral-300">
+            没有个人信息泄露风险
+          </span>
         </div>
 
-        <p class="mt-6 text-center text-xs leading-5 text-neutral-500">
-          仅用于链接解析，请勿用于侵犯他人隐私或其他违法违规用途。本站不存储解析记录。
-        </p>
       </div>
     </section>
   </main>
