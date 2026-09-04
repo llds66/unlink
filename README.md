@@ -1,10 +1,15 @@
-## 第一种分享链接格式
-https://www.xiaohongshu.com/explore/6a90261f000000002102502c?app_platform=android&ignoreEngage=true&app_version=9.44.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBnrxCjHNWSsWOcy0c7VxHmIa-sBtC_7Jzkr4agsCm860=&author_share=1&xhsshare=WeixinSession&shareRedId=ODgyM0dGNkw2NzUyOTgwNjczOTc5Nz8_&apptime=1788500366&share_id=339fe35b0a5a4127b552f5f33c202aee&share_channel=wechat&code=8nb4f7yRzNr
+检测小红书分享链接中是否包含可跳转至用户主页的个人标识。
 
-share_id=339fe35b0a5a4127b552f5f33c202aee
-share_id转user id
+## 使用方式
 
-## 第二种分享链接格式
-https://xhslink.cn/o/7UwDYagWnyl
+1. 粘贴小红书 App 分享链接或包含链接的分享文案。
+2. 点击“检测链接”。
 
-解析重定向链接参数
+## 检测原理
+
+仅处理小红书站内链接及其最多 5 次重定向，不请求用户主页。
+
+1. **`appuid` 参数**：直接读取链接参数中的用户 ID。
+2. **`shareRedId` 参数**：对参数进行 Base64URL 解码，再按固定规则本地还原用户 ID。
+
+两种方式都未获取到用户 ID 时，判定为没有个人信息风险。
