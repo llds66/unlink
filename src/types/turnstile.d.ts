@@ -4,6 +4,8 @@ interface Window {
       container: HTMLElement | string,
       options: {
         sitekey: string
+        theme?: "light" | "dark",
+        size?: "normal" | "flexible" | "compact",
         callback?: (token: string) => void
         "expired-callback"?: () => void
         "error-callback"?: () => void

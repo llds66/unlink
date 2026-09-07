@@ -62,21 +62,53 @@ async function getAppid() {
   }
 }
 
-onMounted(() => {
-  turnstileWidgetId.value = window.turnstile.render(turnstileRef.value!, {
-    sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
-
-    callback(token: string) {
-      turnstileToken.value = token
-    },
-    "expired-callback"() {
-      turnstileToken.value = ""
-    },
-
-    "error-callback"() {
-      turnstileToken.value = ""
+function waitForTurnstile(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.turnstile) {
+      resolve()
+      return
     }
+
+    const start = Date.now()
+
+    const timer = setInterval(() => {
+      if (window.turnstile) {
+        clearInterval(timer)
+        resolve()
+        return
+      }
+
+      if (Date.now() - start > 10000) {
+        clearInterval(timer)
+        reject(new Error("Turnstile 加载超时"))
+      }
+    }, 100)
   })
+}
+onMounted(async () => {
+  try {
+    await waitForTurnstile()
+    turnstileWidgetId.value = window.turnstile.render(turnstileRef.value!, {
+      sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
+      theme: "dark",
+      size: "flexible",
+
+      callback(token: string) {
+        turnstileToken.value = token
+      },
+      "expired-callback"() {
+        turnstileToken.value = ""
+      },
+
+      "error-callback"() {
+        turnstileToken.value = ""
+      }
+    })
+  } catch (error) {
+    console.error(error)
+    toast.error("人机验证加载失败，请刷新页面重试")
+  }
+
 })
 </script>
 
@@ -127,7 +159,7 @@ onMounted(() => {
         </div>
 
         <!-- Cloudflare Turnstile -->
-        <div class="mt-2 flex justify-center">
+        <div class="flex w-full max-w-md flex-col">
           <div ref="turnstileRef"></div>
         </div>
 
